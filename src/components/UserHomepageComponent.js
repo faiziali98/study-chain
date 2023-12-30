@@ -30,8 +30,9 @@ const navBarEnum = {
     course: 4,
 }
 
-const Navbar = ({ userType, setUserType, page, setPage }) => {
+const Navbar = ({ userType, setUserType, page, setPage, isDemo }) => {
     const { updateUser } = useAppContext();
+    const navigate = useNavigate();
 
     const divStyles = {
         cursor: "pointer"
@@ -54,7 +55,14 @@ const Navbar = ({ userType, setUserType, page, setPage }) => {
                     }
                 </li>
                 <li>
-                    <div style={divStyles} onClick={() => updateUser(null)}>Logout</div>
+                    {
+                        isDemo
+                            ? <div style={divStyles} onClick={() => {
+                                updateUser(null);
+                                navigate("/user-experience-survey")
+                            }}>Continue to App</div>
+                            : <div style={divStyles} onClick={() => updateUser(null)}>Logout</div>
+                    }
                 </li>
             </ul>
         </nav>
@@ -133,8 +141,9 @@ const Modal = ({ isOpen, onClose, children }) => {
 
 // Component representing a single question with options
 const UserHomepageComponent = ({ isDemo }) => {
-    const { getUser } = useAppContext();
     const navigate = useNavigate();
+    const { getUser } = useAppContext();
+    
     const [userType, setUserType] = useState(userTypeEnum.student);
     const [signedUp, setSignedUp] = useState(isDemo);
     const [page, setPage] = useState(navBarEnum.home);
@@ -191,7 +200,7 @@ const UserHomepageComponent = ({ isDemo }) => {
                     ? !!getUser()
                         ? <div className={`mainSection ${tourInitiated ? 'main-content' : 'main-content blurred'}`} style={{ minWidth: "640px", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center" }}>
                             <RibbonComponent isDemo={isDemo}>
-                                <Navbar userType={userType} setUserType={setUserType} setPage={setPage} page={page} />
+                                <Navbar userType={userType} setUserType={setUserType} setPage={setPage} page={page} isDemo={isDemo}/>
                             </RibbonComponent>
                             {
                                 page === navBarEnum.settings

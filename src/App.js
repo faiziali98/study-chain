@@ -10,6 +10,7 @@ import VideoTutorialPage from './pages/VideoTutorialPage';
 import ApplicationPage from './pages/ApplicationPage';
 import HomePage from './pages/HomePage';
 import DemoPage from './pages/DemoPage';
+import UserExperienceSurveyPage from './pages/UserExperienceSurveyPage';
 
 // Main component that renders the form with multiple questions
 const App = () => {
@@ -26,6 +27,7 @@ const App = () => {
               <Route path="/application" element={<ApplicationPage />} />
               <Route path="/homepage" element={<HomePage />} />
               <Route path="/demo" element={<DemoPage />} />
+              <Route path="/user-experience-survey" element={<UserExperienceSurveyPage />} />
             </Routes>
         </Router>
       </AppProvider>
