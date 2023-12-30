@@ -1,0 +1,34 @@
+/* Loader.css */
+.loader-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+/* YourComponent.css */
+.congratulations-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background-color: #4caf50;
+    color: #fff;
+    font-size: 24px;
+    padding: 20px;
+    animation: fadeInUp 1s ease-in-out;
+    border-radius: 16px;
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
