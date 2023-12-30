@@ -4,7 +4,7 @@ import LoadingComponent from "../components/LoadingComponent";
 
 const HomePage = () => {
     return <LoadingComponent>
-        <UserHomepageComponent appType="real"/>
+        <UserHomepageComponent />
     </LoadingComponent>;
 };
 

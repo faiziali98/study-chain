@@ -25,12 +25,14 @@ export class EthereumDataSource {
                 // Instantiate the contract using truffle-contract
                 const contractInstance = new web3Instance.eth.Contract(contractJson.abi, this.contractAddress);
                 this.contract = contractInstance;
+                return true;
             } else {
                 console.error('MetaMask not detected. Please install MetaMask extension.');
             }
         } catch (error) {
             console.error('Error connecting to Ethereum:', error);
         }
+        return false;
     }
 
     async checkIfSignedUp(userName, setSignedUp) {

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { borderStyles, buttonStyle } from "../constants/styles";
 import AppLoader from "./AppLoader";
 
-const AllCoursesComponent = ({ dataSource, web3Inp, contract }) => {
+const AllCoursesComponent = ({ dataSource, handleBuyCourseDemo }) => {
     const [loading, setLoading] = useState(true);
     const [courses, setCourses] = useState([]);
 
@@ -18,7 +18,10 @@ const AllCoursesComponent = ({ dataSource, web3Inp, contract }) => {
                 {courses.map((c) => (<li style={{ ...borderStyles }}>
                     <h3 style={{ margin: "0px" }}>{c.title}</h3>
                     <p>{c.summary}</p>
-                    <button onClick={() => dataSource.buyCourse(c, setLoading)} style={{ ...buttonStyle, marginTop: "8px", alignSelf: "center" }}>{`Buy for ${c.amount} ETH`}</button>
+                    <button onClick={() => {
+                        handleBuyCourseDemo();
+                        dataSource.buyCourse(c, setLoading);
+                    }} style={{ ...buttonStyle, marginTop: "8px", alignSelf: "center" }}>{`Buy for ${c.amount} ETH`}</button>
                 </li>))}
             </ul> : <AppLoader />}
         </div>

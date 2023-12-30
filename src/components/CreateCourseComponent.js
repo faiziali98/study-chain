@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { borderStyles, buttonStyle, inputStyles } from '../constants/styles';
 import { useAppContext } from '../context/AppContext';
 
-const CreateCourseComponent = ({ dataSource }) => {
+const CreateCourseComponent = ({ dataSource, handleCreateCourseDemo }) => {
     const [courseName, setCourseName] = useState('');
     const [summary, setSummary] = useState('');
     const [content, setContent] = useState('');
@@ -23,7 +23,8 @@ const CreateCourseComponent = ({ dataSource }) => {
             cost: parseInt(cost, 10), // Convert cost to integer
         };
 
-        dataSource.createCourse(getUser().name, courseData)
+        dataSource.createCourse(getUser().name, courseData);
+        handleCreateCourseDemo();
 
         // Perform further actions, like sending the data to an API, etc.
         console.log('Course Data:', courseData);
