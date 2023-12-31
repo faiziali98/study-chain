@@ -11,7 +11,7 @@ const ShowScore = () => {
     const [passed, setPassed] = useState(false);
 
     useEffect(() => {
-        if (getResult() >= 0) {
+        if (getResult() > 0) {
             setPassed(true);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps

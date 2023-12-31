@@ -1,4 +1,5 @@
 import React, { useState, useContext } from 'react';
+import Cookies from 'js-cookie';
 
 // Create a context to hold the form values
 const AppContext = React.createContext();
@@ -10,7 +11,20 @@ export const AppProvider = ({ children }) => {
         final: {},
     });
 
+    console.log(formValues);
+
     const [user, setUser] = useState(null);
+
+    const saveContextToCookie = () => {
+        Cookies.set('formValues', JSON.stringify(formValues));
+        Cookies.set('user', JSON.stringify(user));
+    }
+
+    const loadContextFromCookie = (setInitializing) => {
+        setFormValues(JSON.parse(Cookies.get('formValues')));
+        setUser(JSON.parse(Cookies.get('user')));
+        setInitializing(false);
+    }
 
     const updateFormValues = (surveyId, question, value) => {
         setFormValues((prevValues) => ({
@@ -35,7 +49,12 @@ export const AppProvider = ({ children }) => {
     }
 
     return (
-        <AppContext.Provider value={{ formValues, updateFormValues, getResult, updateUser, getUser }}>
+        <AppContext.Provider 
+            value={{ 
+                formValues, updateFormValues, getResult, updateUser, getUser,
+                saveContextToCookie, loadContextFromCookie
+            }}
+        >
             {children}
         </AppContext.Provider>
     );
