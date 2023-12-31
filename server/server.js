@@ -9,37 +9,20 @@ const app = express();
 const port = 3001;
 app.use(cors());
 
-// MongoDB model
-const User = mongoose.model('User', new mongoose.Schema({
-    name: String,
-    email: String,
-    password: String,
-}));
-
-const Course = mongoose.model('Course', new mongoose.Schema({
-    amount: Number,
-    content: String,
-    summary: String,
-    title: String,
-}));
-
-const addDemoCourse = async () => {
-    const demoCourse = new Course({ 
-        amount: 10,
-        content: "This is a demo course",
-        summary: "This is a demo course",
-        title: "Demo course", 
-    });
-    await demoCourse.save();
-};
-
 // MongoDB in-memory server setup
 async function startServer() {
     const mongoServer = await MongoMemoryServer.create();
     const mongoUri = mongoServer.getUri();
 
+    // MongoDB model
+    const User = mongoose.model('User', new mongoose.Schema({
+        name: String,
+        email: String,
+        password: String,
+        walletAddress: String,
+    }));
+
     await mongoose.connect(mongoUri);
-    await addDemoCourse();
 
     // Middleware to parse JSON in the request body
     app.use(express.json());
@@ -55,22 +38,12 @@ async function startServer() {
         }
     });
 
-    app.get('/courses', async (req, res) => {
-        try {
-            const courses = await Course.find();
-            res.json(courses);
-        } catch (error) {
-            console.error('Error fetching courses:', error);
-            res.status(500).json({ error: 'Internal Server Error' });
-        }
-    });
-
     // API route to create a new user
     app.post('/users', async (req, res) => {
         const { name, email, password } = req.body;
 
         try {
-            const newUser = new User({ name, email, password });
+            const newUser = new User({ name, email, password, walletAddress: "" });
             await newUser.save();
             res.status(201).json(newUser);
         } catch (error) {
@@ -79,15 +52,31 @@ async function startServer() {
         }
     });
 
-    app.post('/courses', async (req, res) => {
-        const { amount, content, summary, title } = req.body;
+    // API route to update a user by ID
+    app.put('/users/:id', async (req, res) => {
+        const userId = req.params.id;
+        const { name, email, password, walletAddress } = req.body;
 
         try {
-            const newCourse = new Course({ amount, content, summary, title });
-            await newCourse.save();
-            res.status(201).json(newCourse);
+            // Check if the user with the given ID exists
+            const existingUser = await User.findById(userId);
+
+            if (!existingUser) {
+                return res.status(404).json({ error: 'User not found' });
+            }
+
+            // Update user properties
+            existingUser.name = name || existingUser.name;
+            existingUser.email = email || existingUser.email;
+            existingUser.password = password || existingUser.password;
+            existingUser.walletAddress = walletAddress || existingUser.walletAddress;
+
+            // Save the updated user
+            await existingUser.save();
+
+            res.json(existingUser);
         } catch (error) {
-            console.error('Error creating user:', error);
+            console.error('Error updating user:', error);
             res.status(500).json({ error: 'Internal Server Error' });
         }
     });

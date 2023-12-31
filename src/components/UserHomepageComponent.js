@@ -69,14 +69,19 @@ const Navbar = ({ userType, setUserType, page, setPage, isDemo }) => {
     );
 };
 
-const modalJSX = {
-    "register": (
+const ConnectWalletJSX = ({ heading, textColor }) => {
+    return (
         <>
-            <h2>This is demo, in real app, you will need to register the wallet</h2>
+            <h2>{heading}</h2>
             <img style={{ maxWidth: "500px", marginBottom: "12px" }} src="MetaMask_find_connected_sites_extension.gif" alt="gif" />
-            <a href="https://support.metamask.io/hc/en-us/articles/360045901112-Manually-connecting-to-a-dapp"> Follow this tutorial for step by step wallet connection. </a>
+            <a style={{color: textColor}} href="https://support.metamask.io/hc/en-us/articles/360045901112-Manually-connecting-to-a-dapp"> Follow this tutorial for step by step wallet connection. </a>
         </>
-    ),
+    )
+}
+
+const modalJSX = {
+    "default": <ConnectWalletJSX textColor="white" heading="Wallet ID you registered not connected to the website. Connect through Metamask." />,
+    "register": <ConnectWalletJSX heading="This is demo, in real app, you will need to register the wallet" />,
     "buy": (
         <>
             <h3>This is demo, in real app, you will pay through Metamask.</h3>
@@ -143,7 +148,7 @@ const Modal = ({ isOpen, onClose, children }) => {
 const UserHomepageComponent = ({ isDemo }) => {
     const navigate = useNavigate();
     const { getUser } = useAppContext();
-    
+
     const [userType, setUserType] = useState(userTypeEnum.student);
     const [signedUp, setSignedUp] = useState(isDemo);
     const [page, setPage] = useState(navBarEnum.home);
@@ -153,7 +158,10 @@ const UserHomepageComponent = ({ isDemo }) => {
     const [loading, setLoading] = useState(true);
     const [tourInitiated, setTourInitiated] = useState(isDemo ? false : true);
     const [isModalOpen, setModalOpen] = useState(false);
-    const [currModalJsx, setCurrModalJsx] = useState("register");
+    const [currModalJsx, setCurrModalJsx] = useState("default");
+    const [noWalletConnected, setNoWalletConnected] = useState(false);
+    const [walletNotFound, setWalletNotFound] = useState(false);
+    const { walletAddress } = getUser() || {};
 
     const openModal = () => setModalOpen(true);
     const closeModal = () => setModalOpen(false);
@@ -161,26 +169,30 @@ const UserHomepageComponent = ({ isDemo }) => {
     const dataSource = useMemo(() => dataSourceFactory[isDemo ? "demo" : "real"], [isDemo]);
     const handleRegisterDemo = () => {
         if (isDemo) {
-            openModal();
             setCurrModalJsx("register");
+            openModal();
         }
     }
     const handleBuyCourseDemo = () => {
         if (isDemo) {
-            openModal();
             setCurrModalJsx("buy");
+            openModal();
         }
     }
     const handleCreateCourseDemo = () => {
         if (isDemo) {
-            openModal();
             setCurrModalJsx("create");
+            openModal();
         }
     }
 
+    const openWalletNotFoundModal = () => {
+        setWalletNotFound(true);
+    }
+
     useEffect(() => {
-        !!getUser() && dataSource.connect().then((val) => {
-            setConnectedToDataSource(true);
+        !!getUser() && dataSource.connect({ setNoWalletConnected, openWalletNotFoundModal, walletAddress }).then((val) => {
+            setConnectedToDataSource(val);
             setIsEthereumSetup(val);
             setLoading(false);
         });
@@ -200,7 +212,7 @@ const UserHomepageComponent = ({ isDemo }) => {
                     ? !!getUser()
                         ? <div className={`mainSection ${tourInitiated ? 'main-content' : 'main-content blurred'}`} style={{ minWidth: "640px", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center" }}>
                             <RibbonComponent isDemo={isDemo}>
-                                <Navbar userType={userType} setUserType={setUserType} setPage={setPage} page={page} isDemo={isDemo}/>
+                                <Navbar userType={userType} setUserType={setUserType} setPage={setPage} page={page} isDemo={isDemo} />
                             </RibbonComponent>
                             {
                                 page === navBarEnum.settings
@@ -219,22 +231,24 @@ const UserHomepageComponent = ({ isDemo }) => {
                                                 Go to settings and click register.</h3>
                                         </div>
                             }
+                            <Modal isOpen={isModalOpen} onClose={closeModal}>
+                                <div className="modal-scrollable-content" style={{ display: "flex", flexDirection: "column", color: "black", maxWidth: "600px", maxHeight: "400px", overflowY: "auto", alignItems: "center" }}>
+                                    {modalJSX[currModalJsx]}
+                                </div>
+                            </Modal>
                             {
-                                isDemo && <>
-                                    <SiteTourComponent onTourInitiate={setTourInitiated} />
-                                    <Modal isOpen={isModalOpen} onClose={closeModal}>
-                                        <div class="modal-scrollable-content" style={{ display: "flex", flexDirection: "column", color: "black", maxWidth: "600px", maxHeight: "400px", overflowY: "auto", alignItems: "center" }}>
-                                            {modalJSX[currModalJsx]}
-                                        </div>
-                                    </Modal>
-                                </>
+                                isDemo && <SiteTourComponent onTourInitiate={setTourInitiated} />
                             }
                         </div>
                         : <button onClick={() => navigate("/application")} style={{ ...buttonStyle, marginTop: "12px" }}>Please Login First</button>
-                    : <div style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
-                        <img src="/download.png" alt="metamask required" />
-                        <h2>This application requires metamask to be installed, kindly install the metamask extension!</h2>
-                    </div>
+                    : walletNotFound
+                        ? modalJSX.default
+                        : <div style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
+                            <img src="/download.png" alt="metamask required" />
+                            <h2>{noWalletConnected
+                                ? "This application requires Ethereum wallet to be connected to the website. Kindly use Metamask pop-up to connect your wallet then refresh the page."
+                                : "This application requires metamask to be installed, kindly install the metamask extension!"}</h2>
+                        </div>
             }
         </>;
 };

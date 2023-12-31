@@ -109,6 +109,10 @@ export class DemoDataSource {
         this.currentIndex += 1;
     }
 
+    getAllAccounts() {
+        return ["0x4566777", "0x56035345"];
+    }
+
     validate() {
         return true;
     }

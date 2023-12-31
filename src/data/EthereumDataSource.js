@@ -8,9 +8,10 @@ export class EthereumDataSource {
         this.contract = null;
         this.accounts = null;
         this.contractAddress = '0xcecb8ED5eC531e53E0974D4D6f67D1aD414C80F1';
+        this.walletAddress = null;
     }
 
-    async connect() {
+    async connect({setNoWalletConnected, openWalletNotFoundModal, walletAddress}) {
         try {
             // Connect to MetaMask or local Ganache
             const ethereum = window.ethereum;
@@ -18,6 +19,14 @@ export class EthereumDataSource {
                 const web3Instance = new Web3(ethereum);
                 this.web3 = web3Instance;
                 this.accounts = await this.web3.eth.getAccounts();
+                this.walletAddress = walletAddress;
+
+                this.accounts.length < 1 && setNoWalletConnected(true);
+
+                if (!!walletAddress && !this.accounts.includes(walletAddress)){
+                    openWalletNotFoundModal();
+                    return false;
+                }
 
                 // Enable MetaMask account access
                 await ethereum.request({ method: 'eth_requestAccounts' });
@@ -38,7 +47,7 @@ export class EthereumDataSource {
     async checkIfSignedUp(userName, setSignedUp) {
         try {
             const result = await this.contract.methods.isUserSignedUp(userName).call({ 
-                from: this.accounts[0] 
+                from: this.walletAddress 
             });
             setSignedUp(result);
         } catch (error) {
@@ -46,9 +55,11 @@ export class EthereumDataSource {
         }
     }
 
-    async signUp(userName, setResult) {
+    async signUp(userName, setResult, selectedOption, updateUserDB) {
         try {
-            await this.contract.methods.signUp(userName).send({ from: this.accounts[0] });
+            this.walletAddress = selectedOption;
+            await this.contract.methods.signUp(userName).send({ from: this.walletAddress });
+            await updateUserDB(this.walletAddress);
             setResult("Registered!");
         } catch (error) {
             console.log(error);
@@ -59,12 +70,12 @@ export class EthereumDataSource {
     async getCourses(setCourses, setLoading) {
         try {
             const boughtCourses = await this.contract.methods.getBoughtCourses().call({ 
-                from: this.accounts[0] 
+                from: this.walletAddress 
             });
 
             const results = await Promise.all(boughtCourses.map(async (course) => {
                 const [auther, name] = course.split("_");
-                const courseInfo = await this.contract.methods.getCourseMeta(auther, name).call({ from: this.accounts[0] });
+                const courseInfo = await this.contract.methods.getCourseMeta(auther, name).call({ from: this.walletAddress });
                 return {...courseInfo, auther, name};
             }));
 
@@ -79,11 +90,11 @@ export class EthereumDataSource {
 
     async getCreatedCourses(setCourses, setLoading) {
         try {
-            const boughtCourses = await this.contract.methods.getCreatedCourses().call({ from: this.accounts[0] });
+            const boughtCourses = await this.contract.methods.getCreatedCourses().call({ from: this.walletAddress });
 
             const results = await Promise.all(boughtCourses.map(async (course) => {
                 const [auther, name] = course.split("_");
-                const courseInfo = await this.contract.methods.getCourseMeta(auther, name).call({ from: this.accounts[0] });
+                const courseInfo = await this.contract.methods.getCourseMeta(auther, name).call({ from: this.walletAddress });
                 return {...courseInfo, auther, name};
             }));
 
@@ -98,11 +109,11 @@ export class EthereumDataSource {
 
     async getAllCourses(setCourses, setLoading) {
         try {
-            const boughtCourses = await this.contract.methods.getAllCourses().call({ from: this.accounts[0] });
+            const boughtCourses = await this.contract.methods.getAllCourses().call({ from: this.walletAddress });
 
             const results = await Promise.all(boughtCourses.map(async (course) => {
                 const [auther, name] = course.split("_");
-                const courseInfo = await this.contract.methods.getCourseMeta(auther, name).call({ from: this.accounts[0] });
+                const courseInfo = await this.contract.methods.getCourseMeta(auther, name).call({ from: this.walletAddress });
                 return { ...courseInfo, auther, name };
             }));
 
@@ -135,7 +146,7 @@ export class EthereumDataSource {
 
     async getCourse(setCourseInfo, setLoading, course) {
         try {
-            const courseInfo = await this.contract.methods.getCourse(course.auther, course.name).call({ from: this.accounts[0] });
+            const courseInfo = await this.contract.methods.getCourse(course.auther, course.name).call({ from: this.walletAddress });
             setCourseInfo(courseInfo);
             setLoading(false);
         } catch (error) {
@@ -148,7 +159,7 @@ export class EthereumDataSource {
 
     async createCourse(userName, courseData) {
         try {
-            await this.contract.methods.createCourse(userName, courseData.courseName, courseData.summary, courseData.content, courseData.title, courseData.cost).send({ from: this.accounts[0] });
+            await this.contract.methods.createCourse(userName, courseData.courseName, courseData.summary, courseData.content, courseData.title, courseData.cost).send({ from: this.walletAddress });
             alert("Course created!");
         } catch (error) {
             console.log(error);
@@ -158,5 +169,9 @@ export class EthereumDataSource {
 
     validate() {
         return !!this.contract;
+    }
+
+    getAllAccounts() {
+        return this.accounts;
     }
 }

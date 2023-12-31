@@ -11,8 +11,6 @@ export const AppProvider = ({ children }) => {
         final: {},
     });
 
-    console.log(formValues);
-
     const [user, setUser] = useState(null);
 
     const saveContextToCookie = () => {
@@ -22,7 +20,7 @@ export const AppProvider = ({ children }) => {
 
     const loadContextFromCookie = (setInitializing) => {
         setFormValues(JSON.parse(Cookies.get('formValues')));
-        setUser(JSON.parse(Cookies.get('user')));
+        !!user && setUser(JSON.parse(Cookies.get('user')));
         setInitializing(false);
     }
 

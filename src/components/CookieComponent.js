@@ -4,8 +4,9 @@ import { useAppContext } from '../context/AppContext';
 
 const CookieComponent = ({children}) => {
     const location = useLocation();
-    const { saveContextToCookie, loadContextFromCookie } = useAppContext();
+    const { saveContextToCookie, loadContextFromCookie, getUser } = useAppContext();
     const [ initializing, setInitializing ] = useState(true);
+    const user = getUser();
 
     useEffect(() => {
         loadContextFromCookie(setInitializing);
@@ -15,7 +16,7 @@ const CookieComponent = ({children}) => {
     
     useEffect(() => {
         !initializing && saveContextToCookie();
-    }, [initializing, location.pathname, saveContextToCookie]);
+    }, [initializing, location.pathname, saveContextToCookie, user]);
     
     return children
 }
