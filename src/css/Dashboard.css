@@ -1,0 +1,10 @@
+/* Styles.css or your stylesheet */
+.main-content {
+    /* Your main content styles go here */
+    transition: filter 0.3s ease-in-out;
+}
+
+.blurred {
+    filter: blur(2px);
+    /* Apply the blur effect */
+}
