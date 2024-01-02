@@ -7,7 +7,7 @@ export class EthereumDataSource {
         this.web3 = null;
         this.contract = null;
         this.accounts = null;
-        this.contractAddress = '0xcecb8ED5eC531e53E0974D4D6f67D1aD414C80F1';
+        this.contractAddress = contractJson.networks["5777"].address;
         this.walletAddress = null;
     }
 
