@@ -19,8 +19,8 @@ export const AppProvider = ({ children }) => {
     }
 
     const loadContextFromCookie = (setInitializing) => {
-        setFormValues(JSON.parse(Cookies.get('formValues')));
-        !!user && setUser(JSON.parse(Cookies.get('user')));
+        setFormValues(JSON.parse(Cookies.get('formValues') || '{}'));
+        !!user && setUser(JSON.parse(Cookies.get('user') || '{}'));
         setInitializing(false);
     }
 
