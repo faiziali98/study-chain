@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { useAppContext } from '../context/AppContext';
-import { borderStyles } from '../constants/styles';
 
 // Component representing a single question with options
-const Question = ({ id, question, surveyId, setSelected }) => {
+const Question = ({ id, question, setSelected, section }) => {
   const { updateFormValues } = useAppContext();
 
   const [ updated, setUpdated ] = useState(false);
@@ -14,7 +13,7 @@ const Question = ({ id, question, surveyId, setSelected }) => {
       setSelected();
     }
     const selectedValue = parseInt(e.target.value, 10);
-    updateFormValues(surveyId, id, selectedValue);
+    updateFormValues(section, id, selectedValue);
   };
 
   const formStyle = {
@@ -27,7 +26,7 @@ const Question = ({ id, question, surveyId, setSelected }) => {
   };
 
   return (
-    <div style={{...borderStyles, marginBottom: "8px", display: "flex", flexDirection: 'column', rowGap: "10px"}}>
+    <div style={{padding: "16px", marginBottom: "8px", display: "flex", flexDirection: 'column', rowGap: "10px"}}>
       <h3 style={{margin: "2px"}}>{question}</h3>
       <form style={formStyle}>
         {["Very Poor", "Poor", "Average", "Good", "Excellent"].map((value, i) => (

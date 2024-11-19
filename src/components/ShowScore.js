@@ -1,21 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useAppContext } from "../context/AppContext";
 import { useNavigate } from 'react-router-dom';
 import { buttonStyle } from '../constants/styles';
 import logo from '../logo.svg';
 import '../css/Loader.css';
 
 const ShowScore = () => {
-    const { getResult } = useAppContext();
     const navigate = useNavigate();
-    const [passed, setPassed] = useState(false);
-
-    useEffect(() => {
-        if (getResult() > 0) {
-            setPassed(true);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    const passed = true;
 
     const redirectToNextPage = () => {
         navigate(`/${passed ? "demo" : 'initial-survey'}`);

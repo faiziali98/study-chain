@@ -3,29 +3,32 @@ import Survey from "../components/Survey";
 import LoadingComponent from "../components/LoadingComponent";
 
 const questions = {
-    initial: [
+    basic: [
         "How would you rate your understanding of the fundamental concepts of blockchain?",
         "Do you feel confident in your understanding of decentralized applications (DApps)?",
         "Are you familiar with the role and functionality of smart contracts in decentralized applications?",
         "Do you have any understanding of wallets, digital or cryptocurrency, and their transactions?",
         "Indicate your perception of the security features of blockchain:"
     ],
-    final: [
-        "After video tutorial:  Now rate your understanding of the fundamental concepts of blockchain?",
-        "After the tutorial, how confident do you feel in your understanding of decentralized applications (DApps)?",
-        "After the video tutorial, how familiar do you feel with the role and functionality of smart contracts in decentralized applications?",
-        "After the video tutorial, how much understanding have you gained about wallets, digital or cryptocurrency, and their transactions?",
-        "After the video tutorial, please indicate your perception of the security features of blockchain."
+    wallet: [
+        "Your knowledge about Digital Wallet",
+        "Do you have an understanding of MetaMask?",
+        "Do you know how to connect Digital Wallet with StudyChain?",
+    ],
+    navigation: [
+        "Do you have an understanding of Decentralized Application?",
+        "Do you have an understanding of StudyChain Navigation and function?"
     ]
 };
 
-const nextPage = {
-    initial: "video-tutorial",
-    final: "score"
+const headings = {
+    basic: "Basic Knowledge of Blockchain",
+    wallet: "Digital Wallet",
+    navigation: "Navigation of StudyChain"
 }
 
 const SurveyPage = ({id}) => <LoadingComponent>
-        <Survey id={id} nextPage={nextPage[id]} questions={questions[id]}/>
+        <Survey id={id} nextPage='video-tutorial' questions={questions} headings = {headings} />
     </LoadingComponent>;
 
 export default SurveyPage;
