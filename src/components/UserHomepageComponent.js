@@ -13,6 +13,8 @@ import SiteTourComponent from './SiteTourComponent';
 import AppLoader from './AppLoader';
 import RibbonComponent from './RibbonComponent';
 import ReactPlayer from 'react-player';
+import ChatbotWithToggle from './ChatbotWithToggle';
+
 
 import '../css/Modal.css'; // Import your CSS file for styling
 import '../css/Dashboard.css';
@@ -74,7 +76,7 @@ const ConnectWalletJSX = ({ heading, textColor }) => {
         <>
             <h2>{heading}</h2>
             <img style={{ maxWidth: "500px", marginBottom: "12px" }} src="MetaMask_find_connected_sites_extension.gif" alt="gif" />
-            <a style={{color: textColor}} href="https://support.metamask.io/hc/en-us/articles/360045901112-Manually-connecting-to-a-dapp"> Follow this tutorial for step by step wallet connection. </a>
+            <a style={{ color: textColor }} href="https://support.metamask.io/hc/en-us/articles/360045901112-Manually-connecting-to-a-dapp"> Follow this tutorial for step by step wallet connection. </a>
         </>
     )
 }
@@ -204,6 +206,11 @@ const UserHomepageComponent = ({ isDemo }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [connectedToDataSource, page]);
 
+    const liStyle = {
+        "paddingTop": "12px",
+        "paddingBottom": "12px"
+    };
+
     return loading
         ? <AppLoader />
         : <>
@@ -214,28 +221,67 @@ const UserHomepageComponent = ({ isDemo }) => {
                             <RibbonComponent isDemo={isDemo}>
                                 <Navbar userType={userType} setUserType={setUserType} setPage={setPage} page={page} isDemo={isDemo} />
                             </RibbonComponent>
-                            {
-                                page === navBarEnum.settings
-                                    ? <SettingsComponent dataSource={dataSource} signedUp={signedUp} handleRegisterDemo={handleRegisterDemo} />
-                                    : signedUp
-                                        ? page === navBarEnum.home
-                                            ? userType === userTypeEnum.student
-                                                ? <BoughtCoursesComponent dataSource={dataSource} setPage={setPage} setCourse={setCourse} />
-                                                : <CreatedCoursesComponent dataSource={dataSource} setPage={setPage} setCourse={setCourse} />
-                                            : page === navBarEnum.buy ? <AllCoursesComponent dataSource={dataSource} handleBuyCourseDemo={handleBuyCourseDemo} />
-                                                : page === navBarEnum.course ? <CourseComponent dataSource={dataSource} course={course} />
-                                                    : page === navBarEnum.create && <CreateCourseComponent dataSource={dataSource} handleCreateCourseDemo={handleCreateCourseDemo} />
-                                        : <div style={{ minWidth: "80vw", minHeight: "80vh", display: "flex", flexDirection: "column", alignSelf: "center", alignItems: "center", justifyContent: "center" }}>
-                                            <img src="/cryptowallet.avif" alt="metamask required" style={{ maxWidth: "40vw", maxHeight: "20vh" }} />
-                                            <h3>Kindly register your wallet before we can start!
-                                                Go to settings and click register.</h3>
-                                        </div>
-                            }
+                            <div style={{ display: "flex", flexDirection: "row" }}>
+                                {
+                                    page === navBarEnum.settings
+                                        ? <SettingsComponent dataSource={dataSource} signedUp={signedUp} handleRegisterDemo={handleRegisterDemo} />
+                                        : signedUp
+                                            ? page === navBarEnum.home
+                                                ? userType === userTypeEnum.student
+                                                    ? <BoughtCoursesComponent dataSource={dataSource} setPage={setPage} setCourse={setCourse} />
+                                                    : <CreatedCoursesComponent dataSource={dataSource} setPage={setPage} setCourse={setCourse} />
+                                                : page === navBarEnum.buy ? <AllCoursesComponent dataSource={dataSource} handleBuyCourseDemo={handleBuyCourseDemo} />
+                                                    : page === navBarEnum.course ? <CourseComponent dataSource={dataSource} course={course} />
+                                                        : page === navBarEnum.create && <CreateCourseComponent dataSource={dataSource} handleCreateCourseDemo={handleCreateCourseDemo} />
+                                            : <div style={{ minWidth: "80vw", minHeight: "80vh", display: "flex", flexDirection: "column", alignSelf: "center", alignItems: "center", justifyContent: "center" }}>
+                                                <img src="/cryptowallet.avif" alt="metamask required" style={{ maxWidth: "40vw", maxHeight: "20vh" }} />
+                                                <h3>Kindly register your wallet before we can start!
+                                                    Go to settings and click register.</h3>
+                                            </div>
+                                }
+
+                                <div style={{ ...borderStyles }}>
+                                    Users on our platform
+                                    <ul style={{ marginLeft: "-12px" }}>
+                                        <li style={{...liStyle}}>
+                                            Michael Walington
+                                        </li>
+                                        <li style={{...liStyle}}>
+                                            Sarah Kensington
+                                        </li>
+                                        <li style={{...liStyle}}>
+                                            Jonathan Berrington
+                                        </li>
+                                        <li style={{...liStyle}}>
+                                            Emily Carrington
+                                        </li>
+                                        <li style={{...liStyle}}>
+                                            Christopher Alderman
+                                        </li>
+                                        <li style={{...liStyle}}>
+                                            Olivia Harrington
+                                        </li>
+                                        <li style={{...liStyle}}>
+                                            Benjamin Worthington
+                                        </li>
+                                        <li style={{...liStyle}}>
+                                            Isabella Remington
+                                        </li>
+                                        <li style={{...liStyle}}>
+                                            Alexander Lexington
+                                        </li>
+                                        <li style={{...liStyle}}>
+                                            Sophia Pennington
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
                             <Modal isOpen={isModalOpen} onClose={closeModal}>
                                 <div className="modal-scrollable-content" style={{ display: "flex", flexDirection: "column", color: "black", maxWidth: "600px", maxHeight: "400px", overflowY: "auto", alignItems: "center" }}>
                                     {modalJSX[currModalJsx]}
                                 </div>
                             </Modal>
+                            <ChatbotWithToggle />
                             {
                                 isDemo && <SiteTourComponent onTourInitiate={setTourInitiated} />
                             }

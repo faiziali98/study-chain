@@ -7,8 +7,9 @@ const AppContext = React.createContext();
 // Create a context provider component
 export const AppProvider = ({ children }) => {
     const [formValues, setFormValues] = useState({
-        initial: {},
-        final: {},
+        basic: {},
+        wallet: {},
+        navigation: {}
     });
 
     const [user, setUser] = useState(null);
@@ -38,12 +39,19 @@ export const AppProvider = ({ children }) => {
     const getUser = () => user;
 
     const getResult = () => {
-        const { initial, final } = formValues;
-        const score = Object.keys(initial).reduce((accumulator, key) => (
-            accumulator + (final[key] - initial[key])
-        ), 0);
+        const toImprove = Object.keys(formValues).map((section) => [
+            section, Object.keys(formValues[section]).reduce((accumulator, key) => (
+                accumulator + formValues[section][key]
+            ), 0)
+        ]).reduce((a, b) => a[1] < b[1] ? b : a);
 
-        return score;
+        console.log(Object.keys(formValues).map((section) => [
+            section, Object.keys(formValues[section]).reduce((accumulator, key) => (
+                accumulator + formValues[section][key]
+            ), 0)
+        ]))
+    
+        return toImprove[0];
     }
 
     return (
