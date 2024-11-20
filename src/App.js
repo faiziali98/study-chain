@@ -22,7 +22,7 @@ const App = () => {
           <CookieComponent>
             <Routes>
               <Route path="/" element={<LandingPage />} />
-              <Route path="/initial-survey" element={<SurveyPage id="initial" />} />
+              <Route path="/initial-survey" element={<SurveyPage id="initialize" />} />
               <Route path="/video-tutorial" element={<VideoTutorialPage />} />
               <Route path="/final-survey" element={<SurveyPage id="final" />} />
               <Route path="/score" element={<ScorePage />} />
