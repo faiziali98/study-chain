@@ -1,5 +1,23 @@
 import Web3 from 'web3';
 
+async function withTimeout(promise, timeoutMs) {
+    return new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => {
+            reject(new Error(`Operation timed out after ${timeoutMs} ms`));
+        }, timeoutMs);
+
+        promise
+            .then((result) => {
+                clearTimeout(timeout);
+                resolve(result);
+            })
+            .catch((err) => {
+                clearTimeout(timeout);
+                reject(err);
+            });
+    });
+}
+
 export class DemoDataSource {
     constructor() {
         this.signedUp = false;
@@ -37,10 +55,10 @@ export class DemoDataSource {
             if (ethereum) {
                 const web3Instance = new Web3(ethereum);
                 this.web3 = web3Instance;
-                this.accounts = await this.web3.eth.getAccounts();
+                this.accounts = await withTimeout(this.web3.eth.getAccounts(), 30000);
 
                 // Enable MetaMask account access
-                await ethereum.request({ method: 'eth_requestAccounts' });
+                await withTimeout(ethereum.request({ method: 'eth_requestAccounts' }), 30000);
                 return true;
             } else {
                 console.error('MetaMask not detected. Please install MetaMask extension.');
@@ -115,5 +133,9 @@ export class DemoDataSource {
 
     validate() {
         return true;
+    }
+
+    getType() {
+        return "Demo";
     }
 }

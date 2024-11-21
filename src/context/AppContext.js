@@ -43,7 +43,7 @@ export const AppProvider = ({ children }) => {
             section, Object.keys(formValues[section]).reduce((accumulator, key) => (
                 accumulator + formValues[section][key]
             ), 0)
-        ]).reduce((a, b) => a[1] < b[1] ? b : a);
+        ]).reduce((a, b) => a[1] < b[1] ? a : b);
 
         console.log(Object.keys(formValues).map((section) => [
             section, Object.keys(formValues[section]).reduce((accumulator, key) => (

@@ -174,4 +174,8 @@ export class EthereumDataSource {
     getAllAccounts() {
         return this.accounts;
     }
+
+    getType() {
+        return "Ethereum";
+    } 
 }

@@ -196,8 +196,7 @@ const UserHomepageComponent = ({ isDemo }) => {
         !!getUser() && dataSource.connect({ setNoWalletConnected, openWalletNotFoundModal, walletAddress }).then((val) => {
             setConnectedToDataSource(val);
             setIsEthereumSetup(val);
-            setLoading(false);
-        });
+        }).finally(() => setLoading(false));
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
