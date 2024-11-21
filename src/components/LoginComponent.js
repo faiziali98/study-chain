@@ -54,7 +54,7 @@ const LoginForm = () => {
                     navigate("/homepage");
                 }
             } catch (error) {
-                console.error('Error logging in:', error.response.data);
+                console.error('Error logging in.');
             }
         }
     };
